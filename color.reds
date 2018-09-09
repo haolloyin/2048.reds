@@ -24,6 +24,8 @@ Red/System []
 #define FG_WHITE            "^[[97m"
 #define FG_YELLOW           "^[[33m"
 
+
+comment {
 ; See https://www.cnblogs.com/clover-toeic/p/4031618.html
 printf ["%s%s%s^/" BG_BLUE "blue" RESET]
 printf ["%s%s%s^/" BG_RED "red" RESET]
@@ -32,7 +34,7 @@ printf ["%s%s%s^/" FG_YELLOW "yellow" RESET]
 print-line ["test " BOLD_ON "BOLD " RESET FG_RED "RED" RESET]
 print-line ["^[[1;33mBLINK_AND_BOLD" RESET]
 print-line ["^[[5;33mBLINK_AND_BOLD" RESET]
-
+}
 
 
 
