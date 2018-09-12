@@ -40,6 +40,10 @@ Red/System []
                 mode    [byte-ptr!]
                 return: [byte-ptr!]
             ]
+            ; see https://docs.microsoft.com/zh-cn/cpp/c-runtime-library/reference/getch-getwch
+            getch: "_getch" [
+                return: [integer!]
+            ]
         ]
     ]
 ][
@@ -50,7 +54,21 @@ Red/System []
                 mode    [byte-ptr!]
                 return: [byte-ptr!]
             ]
+            getchar: "getchar" [
+                return: [integer!]
+            ]
         ]
+    ]
+
+    getch: func [
+        return: [integer!]
+        /local c
+    ][
+        ; https://www.ibm.com/support/knowledgecenter/zh/ssw_aix_72/com.ibm.aix.cmds5/stty.htm#stty__row-d3e57314
+        shell "stty -echo -icanon" ; 不回显，禁用规范输入
+        c: getchar
+        shell "stty echo icanon" ; 恢复
+        c
     ]
 ]
 
@@ -195,9 +213,10 @@ game: context [
     draw-board: func [
         /local x y i tile
     ][
-        clear-screen
+        ;clear-screen
         ;draw-ascii
 
+        print lf
         y: 0
         while [y < _y][
             print "  +" 
@@ -314,8 +333,52 @@ game: context [
         0
     ]
 
+    #enum MoveTo! [
+        Up Down Left Right
+    ]
+    
+    move: func [
+        to  [MoveTo!]
+    ][
+        game/add-tiles 1
+        draw-board
+    ]
+
+    start: func [
+        /local c
+    ][
+        forever [
+            c: getch    ; 无回显、缓冲读取一个字符
+            switch c [
+                #"w" [
+                    move Up
+                    print "Up "
+                ]
+                #"s" [
+                    move Down
+                    print "Down "
+                ]
+                #"a" [
+                    move Left
+                    print "Left "
+                ]
+                #"d" [
+                    move Right
+                    print "Right "
+                ]
+                #"." [
+                    print-line "QUIT game, bye~"
+                    break
+                ]
+                default [
+                    print c
+                ]
+            ]
+        ]
+    ]
 ]
 
+;---------------------- 2048  ---------------------- 
 start-game: does [
     game/init-board 4 4
     game/print-board-value
@@ -323,6 +386,8 @@ start-game: does [
     game/add-tiles 3
     game/draw-board
     game/print-board-value
+
+    game/start
 ]
 
 show-menu: func [
@@ -362,8 +427,5 @@ show-menu: func [
     
 ]
 
-
-
 show-menu
-
 
