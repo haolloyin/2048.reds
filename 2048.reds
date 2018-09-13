@@ -342,6 +342,20 @@ game: context [
     ][
         game/add-tiles 1
         draw-board
+        comment {
+            0  1  2  3
+            4  5  6  7
+            8  9  10 11
+            12 13 14 15
+
+                Up
+            prev: 0 4 8    1 5 9    2 6  10   3 7  11
+            this: 4 8 12   5 9 13   6 10 14   7 11 15
+
+                Left
+            prev: 0 1 2   4 5 6   8 9  10   12 13 14
+            this: 1 2 3   5 6 7   9 10 11   13 14 15
+        }
     ]
 
     start: func [
