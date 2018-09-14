@@ -334,91 +334,137 @@ game: context [
     ]
 
     move-tile: func [
-        curr [integer!]
-        next [integer!]
-        /local tile c n
+        curr [tile!]
+        next [tile!]
     ][
-        print ["curr:" curr ", next:" next lf]
-        c: _board + curr
-        n: _board + next
-
-        case [
-            c/value = n/value [
-                c/value: c/value * 2
-                n/value: 0
-                c/blocked: yes
-            ]
-            c/value <> n/value [
-
-            ]
+        if curr/value = next/value [
+            curr/value: curr/value * 2
+            next/value: 0
         ]
     ]
 
-    move: func [
-        x   [integer!]
-        i   [integer!]
-        j   [integer!]
-        /local curr next k times
+    comment {
+        0  1  2  3
+        4  5  6  7
+        8  9  10 11
+        12 13 14 15
+
+            --Up
+        curr: 0 4 8    1 5 9    2 6  10   3 7  11
+        next: 4 8 12   5 9 13   6 10 14   7 11 15
+            --Down
+        curr: 12 8 4   13 9 5   14 10 6   15 11 7
+        next: 8  4 0   9  5 1   10 6  2   11 7  3
+            --Left
+        curr: 0 1 2   4 5 6   8 9  10   12 13 14
+        next: 1 2 3   5 6 7   9 10 11   13 14 15
+            --Right
+        curr: 3 2 1   7 6 5   11 10 9   15 14 13
+        next: 2 1 0   6 5 4   10 9  8   14 13 12
+    }
+    move-line: func [
+        curr    [integer!]
+        next    [integer!]
+        i       [integer!]
+        j       [integer!]
+        /local k times cc nn
+            c [tile!]
+            n [tile!]
     ][
-        comment {
-            0  1  2  3
-            4  5  6  7
-            8  9  10 11
-            12 13 14 15
-        }
+        cc: curr
+        nn: next
+        ; 每一行/列，移动 3次
+        k: 1
+        until [
+            print ["curr:" curr ", next:" next lf]
+            c: _board + curr
+            n: _board + next
 
-        ; 每次要处理4行或者4列，每一行或列要移动3次
-        times: 0
-        while [times < 4][
-            curr: times
-            next: curr + j
-            ; 移动第一次
-            move-tile curr next
+            move-tile c n
 
-            ; 再移动两次
-            k: 0
-            while [k < 2][
-                curr: next
-                next: next + j
-                move-tile curr next
-                k: k + 1
-            ]
-
-            ; 重排当前的行或列
-            times: times + 1
-            print lf
+            curr: next
+            next: next + j
+            k: k + 1
+            k > 3
         ]
 
-        ; 随机新增一个块，重画棋盘
-        game/add-tiles 1
-        draw-board
+        ; 重排当前的行或列
+        k: 1
+        curr: cc
+        next: nn
+        until [
+            c: _board + curr
+            n: _board + next
+
+            ; 往前挪一位
+            if all [c/value = 0 n/value <> 0][
+                c/value: n/value
+                n/value: 0
+            ]
+
+            curr: next
+            next: next + j
+            k: k + 1
+            k > 3
+        ]
     ]
 
     start: func [
-        /local c
+        /local c times curr next update?
     ][
         forever [
             c: getch    ; 无回显、缓冲读取一个字符
+            times: 0
+            update?: true
+
             switch c [
-                #"w" [
-                    move 0 1 4
+                #"w" [  ; Up
+                    ; 每次要处理 4 行/列
+                    while [times < 4][
+                        curr: times
+                        next: curr + 4
+                        move-line curr next 1 4
+                        times: times + 1
+                    ]
                 ]
-                #"s" [
-
+                #"s" [  ; Down
+                    while [times < 4][
+                        curr: 12 + times
+                        next: curr - 4
+                        move-line curr next 1 -4
+                        times: times + 1
+                    ]
                 ]
-                #"a" [
-
+                #"a" [  ; Left
+                    while [times < 4][
+                        curr: times * 4
+                        next: curr + 1
+                        move-line curr next 4 1
+                        times: times + 1
+                    ]
                 ]
-                #"d" [
-
+                #"d" [  ; Right
+                    while [times < 4][
+                        curr: 3 + (times * 4)
+                        next: curr - 1
+                        move-line curr next 4 -1
+                        times: times + 1
+                    ]
                 ]
                 #"q" [
                     print-line [lf "QUIT game, bye~"]
+                    update?: false
                     break
                 ]
                 default [
-
+                    update?: false
                 ]
+            ]
+
+            if update? [
+                ; 随机新增一个块，重画棋盘（最好不要在刚移动过的块来新增）
+                game/add-tiles 1
+                draw-board
             ]
         ]
     ]
