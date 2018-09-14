@@ -333,29 +333,65 @@ game: context [
         0
     ]
 
-    #enum MoveTo! [
-        Up Down Left Right
-    ]
-    
-    move: func [
-        to  [MoveTo!]
+    move-tile: func [
+        curr [integer!]
+        next [integer!]
+        /local tile c n
     ][
-        game/add-tiles 1
-        draw-board
+        print ["curr:" curr ", next:" next lf]
+        c: _board + curr
+        n: _board + next
+
+        case [
+            c/value = n/value [
+                c/value: c/value * 2
+                n/value: 0
+                c/blocked: yes
+            ]
+            c/value <> n/value [
+
+            ]
+        ]
+    ]
+
+    move: func [
+        x   [integer!]
+        i   [integer!]
+        j   [integer!]
+        /local curr next k times
+    ][
         comment {
             0  1  2  3
             4  5  6  7
             8  9  10 11
             12 13 14 15
-
-                Up
-            prev: 0 4 8    1 5 9    2 6  10   3 7  11
-            this: 4 8 12   5 9 13   6 10 14   7 11 15
-
-                Left
-            prev: 0 1 2   4 5 6   8 9  10   12 13 14
-            this: 1 2 3   5 6 7   9 10 11   13 14 15
         }
+
+        ; 每次要处理4行或者4列，每一行或列要移动3次
+        times: 0
+        while [times < 4][
+            curr: times
+            next: curr + j
+            ; 移动第一次
+            move-tile curr next
+
+            ; 再移动两次
+            k: 0
+            while [k < 2][
+                curr: next
+                next: next + j
+                move-tile curr next
+                k: k + 1
+            ]
+
+            ; 重排当前的行或列
+            times: times + 1
+            print lf
+        ]
+
+        ; 随机新增一个块，重画棋盘
+        game/add-tiles 1
+        draw-board
     ]
 
     start: func [
@@ -365,27 +401,23 @@ game: context [
             c: getch    ; 无回显、缓冲读取一个字符
             switch c [
                 #"w" [
-                    move Up
-                    print "Up "
+                    move 0 1 4
                 ]
                 #"s" [
-                    move Down
-                    print "Down "
+
                 ]
                 #"a" [
-                    move Left
-                    print "Left "
+
                 ]
                 #"d" [
-                    move Right
-                    print "Right "
+
                 ]
-                #"." [
-                    print-line "QUIT game, bye~"
+                #"q" [
+                    print-line [lf "QUIT game, bye~"]
                     break
                 ]
                 default [
-                    print c
+
                 ]
             ]
         ]
@@ -442,4 +474,5 @@ show-menu: func [
 ]
 
 show-menu
+
 
