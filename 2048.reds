@@ -182,7 +182,7 @@ game: context [
         ]
     ]
 
-    print-board-value: func [
+    debug-print-board: func [
         "打印棋盘每个各自的值"
         /local i tile
     ][
@@ -213,8 +213,8 @@ game: context [
     draw-board: func [
         /local x y i tile
     ][
-        ;clear-screen
-        ;draw-ascii
+        clear-screen
+        draw-ascii
 
         print lf
         y: 0
@@ -327,7 +327,7 @@ game: context [
             if index = -1 [return -1]
 
             value: fill-tile index -1
-            print-line ["  fill board/" index " with " value]
+            ;print-line ["  fill board/" index " with " value]
             i: i + 1
         ]
         0
@@ -376,7 +376,7 @@ game: context [
         ; 每一行/列，移动 3次
         k: 1
         until [
-            print ["curr:" curr ", next:" next lf]
+            ;print ["curr:" curr ", next:" next lf]
             c: _board + curr
             n: _board + next
 
@@ -452,7 +452,7 @@ game: context [
                     ]
                 ]
                 #"q" [
-                    print-line [lf "QUIT game, bye~"]
+                    print-line [lf "Bye~" lf]
                     update?: false
                     break
                 ]
@@ -473,11 +473,9 @@ game: context [
 ;---------------------- 2048  ---------------------- 
 start-game: does [
     game/init-board 4 4
-    game/print-board-value
-    ;game/draw-board
     game/add-tiles 3
     game/draw-board
-    game/print-board-value
+    game/debug-print-board
 
     game/start
 ]
