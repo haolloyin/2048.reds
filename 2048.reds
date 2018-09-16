@@ -389,27 +389,24 @@ game: context [
             k > 3
         ]
 
-        ; 每一行/列，移动 3次
+        ; 重排每一行/列
         curr: cc
         next: nn
         k: 1
         until [
             c: _board + curr
-            n: _board + next
-            
             if c/value = 0 [
+                nn: next
                 h: 4 - k
                 while [h > 0][
-                    if n/value <> 0 [
-                        break
-                    ]
-                    n: n + j
+                    n: _board + nn
+                    if n/value <> 0 [break]
+                    nn: nn + j
+                    h: h - 1
                 ]
                 c/value: n/value
                 n/value: 0
             ]
-            print lf
-
             curr: next
             next: next + j
             k: k + 1
