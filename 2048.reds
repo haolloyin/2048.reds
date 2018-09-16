@@ -213,8 +213,8 @@ game: context [
     draw-board: func [
         /local x y i tile
     ][
-        clear-screen
-        draw-ascii
+        ;clear-screen
+        ;draw-ascii
 
         print lf
         y: 0
@@ -367,12 +367,13 @@ game: context [
         next    [integer!]
         i       [integer!]
         j       [integer!]
-        /local k times cc nn
+        /local k times cc nn h
             c [tile!]
             n [tile!]
     ][
         cc: curr
         nn: next
+
         ; 每一行/列，移动 3次
         k: 1
         until [
@@ -388,19 +389,26 @@ game: context [
             k > 3
         ]
 
-        ; 重排当前的行或列
-        k: 1
+        ; 每一行/列，移动 3次
         curr: cc
         next: nn
+        k: 1
         until [
             c: _board + curr
             n: _board + next
-
-            ; 往前挪一位
-            if all [c/value = 0 n/value <> 0][
+            
+            if c/value = 0 [
+                h: 4 - k
+                while [h > 0][
+                    if n/value <> 0 [
+                        break
+                    ]
+                    n: n + j
+                ]
                 c/value: n/value
                 n/value: 0
             ]
+            print lf
 
             curr: next
             next: next + j
