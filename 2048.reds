@@ -304,14 +304,14 @@ game: context [
     ]
 
     fill-tile: func [
-        "对指定下标的空白块增加一个随机值"
+        "对指定下标的空白块增加一个值"
         index   [integer!]
         value   [integer!]
         return: [integer!]
         /local tile
     ][
         tile: _board + index
-        tile/value: either value = 0 [0][random-tile-value]
+        tile/value: either value = -1 [random-tile-value][value]
         tile/value
     ]
 
@@ -343,55 +343,58 @@ game: context [
         ]
     ]
 
-    comment {
-        0  1  2  3
-        4  5  6  7
-        8  9  10 11
-        12 13 14 15
-
-            --Up
-        curr: 0 4 8    1 5 9    2 6  10   3 7  11
-        next: 4 8 12   5 9 13   6 10 14   7 11 15
-            --Down
-        curr: 12 8 4   13 9 5   14 10 6   15 11 7
-        next: 8  4 0   9  5 1   10 6  2   11 7  3
-            --Left
-        curr: 0 1 2   4 5 6   8 9  10   12 13 14
-        next: 1 2 3   5 6 7   9 10 11   13 14 15
-            --Right
-        curr: 3 2 1   7 6 5   11 10 9   15 14 13
-        next: 2 1 0   6 5 4   10 9  8   14 13 12
-    }
-    move-line: func [
+    handle-tile-values: func [
+        "处理每一行/列的值"
         curr    [integer!]
         next    [integer!]
-        i       [integer!]
         j       [integer!]
-        /local k times cc nn h
-            c [tile!]
-            n [tile!]
+        /local  k h nn
+            c   [tile!]
+            n   [tile!]
+            n1  [tile!]
     ][
-        cc: curr
-        nn: next
-
-        ; 每一行/列，移动 3次
         k: 1
         until [
-            ;print ["curr:" curr ", next:" next lf]
-            c: _board + curr
-            n: _board + next
-
-            move-tile c n
-
+            c: _board + curr    ; 当前块
+            n1: _board + next   ; 下一块
+            if c/value > 0 [    ; 当前块非空，往后找到第一个不为空的判断
+                nn: next
+                h: 4 - k
+                while [h > 0][
+                    n: _board + nn
+                    if n/value > 0 [   ; 后面第一个不为空的块
+                        either c/value = n/value [
+                            ; 与当前块相同，合并
+                            c/value: c/value * 2
+                            printf ["%d -> %d^/" nn curr]
+                        ][
+                            ; 与当前块不同，挪到当前的下一块
+                            n1/value: n/value
+                            printf ["%d >> %d^/" nn next]
+                        ]
+                        n/value: 0
+                        break
+                    ]
+                    nn: nn + j
+                    h: h - 1
+                ]
+            ]
             curr: next
             next: next + j
             k: k + 1
             k > 3
         ]
+    ]
 
-        ; 重排每一行/列
-        curr: cc
-        next: nn
+    compact-empty-tiles: func [
+        "压缩空白块"
+        curr    [integer!]
+        next    [integer!]
+        j       [integer!]
+        /local  k h nn
+            c   [tile!]
+            n   [tile!]
+    ][
         k: 1
         until [
             c: _board + curr    ; 当前块
@@ -414,6 +417,53 @@ game: context [
             k: k + 1
             k > 3
         ]
+    ]
+
+    add-tiles-for-test: does [
+        game/fill-tile 0 2
+        game/fill-tile 2 2
+
+        game/fill-tile 5 4
+        game/fill-tile 7 4
+
+        game/fill-tile 8 8
+        game/fill-tile 11 8 
+
+        game/fill-tile 12 2
+        game/fill-tile 15 4
+    ]
+
+    comment {
+        0  1  2  3
+        4  5  6  7
+        8  9  10 11
+        12 13 14 15
+
+            --Up
+        curr: 0 4 8    1 5 9    2 6  10   3 7  11
+        next: 4 8 12   5 9 13   6 10 14   7 11 15
+            --Down
+        curr: 12 8 4   13 9 5   14 10 6   15 11 7
+        next: 8  4 0   9  5 1   10 6  2   11 7  3
+            --Left
+        curr: 0 1 2   4 5 6   8 9  10   12 13 14
+        next: 1 2 3   5 6 7   9 10 11   13 14 15
+            --Right
+        curr: 3 2 1   7 6 5   11 10 9   15 14 13
+        next: 2 1 0   6 5 4   10 9  8   14 13 12
+    }
+
+    move-line: func [
+        curr    [integer!]
+        next    [integer!]
+        i       [integer!]
+        j       [integer!]
+    ][
+        ; 处理每一行/列的值
+        handle-tile-values curr next j
+
+        ; 压缩掉空白块
+        ;compact-empty-tiles curr next j
     ]
 
     start: func [
@@ -472,18 +522,20 @@ game: context [
                 ; 随机新增一个块，重画棋盘（最好不要在刚移动过的块来新增）
                 game/add-tiles 1
                 draw-board
+                ;debug-print-board
             ]
         ]
     ]
 ]
 
 ;---------------------- 2048  ---------------------- 
+
 start-game: does [
     game/init-board 4 4
-    game/add-tiles 3
+    ;game/add-tiles 3
+    game/add-tiles-for-test     ;-- test
     game/draw-board
-    game/debug-print-board
-
+    ;game/debug-print-board
     game/start
 ]
 
