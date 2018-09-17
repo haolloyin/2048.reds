@@ -394,18 +394,20 @@ game: context [
         next: nn
         k: 1
         until [
-            c: _board + curr
-            if c/value = 0 [
+            c: _board + curr    ; 当前块
+            if c/value = 0 [    ; 当前为空，往后找到第一个不为空的填进来
                 nn: next
                 h: 4 - k
                 while [h > 0][
                     n: _board + nn
-                    if n/value <> 0 [break]
+                    if n/value <> 0 [   ; 后面第一个不为空的块
+                        c/value: n/value
+                        n/value: 0
+                        break
+                    ]
                     nn: nn + j
                     h: h - 1
                 ]
-                c/value: n/value
-                n/value: 0
             ]
             curr: next
             next: next + j
