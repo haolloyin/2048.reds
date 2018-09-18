@@ -118,10 +118,11 @@ draw-ascii: func [][
     print [FG_BLUE BOLD "  /$$$$$$/| $$ $$ $$| $$$$$$$$|  $$$$$$/   " RESET FG_RED " /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/" FG_DEFAULT] LINE(1)
     print [FG_BLUE BOLD " /$$____/ | $$\ $$$$|_____  $$ >$$__  $$   " RESET FG_RED "| $$  \__/| $$$$$$$$| $$  | $$|  $$$$$$ " FG_DEFAULT] LINE(1)
     print [FG_BLUE BOLD "| $$      | $$ \ $$$      | $$| $$  \ $$   " RESET FG_RED "| $$      | $$_____/| $$  | $$ \____  $$" FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "| $$$$$$$$|  $$$$$$/      | $$|  $$$$$$//$$" RESET FG_RED "| $$      |  $$$$$$$|  $$$$$$$ /$$$$$$$/" FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "|________/ \______/       |__/ \______/|__/" RESET FG_RED "|__/       \_______/ \_______/|_______/ " FG_DEFAULT] LINE(2)
+    print [FG_BLUE BOLD "| $$$$$$$$|  $$$$$$/      | $$|  $$$$$$/" RESET "/$$" RESET FG_RED "| $$      |  $$$$$$$|  $$$$$$$ /$$$$$$$/" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "|________/ \______/       |__/ \______/"  RESET "|__/" RESET FG_RED "|__/       \_______/ \_______/|_______/ " FG_DEFAULT] LINE(2)
     print [FG_BLUE BOLD "   http://patorjk.com/software/taag/#p=display&f=Big%20Money-ne&t=2048.reds                        " FG_DEFAULT] LINE(1)
     print [FG_GREEN BOLD "          Inspired by https://github.com/plibither8/2048.cpp" FG_DEFAULT] LINE(1)
+    print [FG_RED        "          Writen in Red/System (https://github.com/red/red)"  FG_DEFAULT] LINE(1)
 ]
 
 
