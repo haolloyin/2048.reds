@@ -112,23 +112,16 @@ clear-screen: func [][
 
 draw-ascii: func [][
     LINE(1)
-    print [FG_BLUE BOLD "  222222222222222          000000000             444444444        888888888      " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2:::::::::::::::22      00:::::::::00          4::::::::4      88:::::::::88    " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2::::::222222:::::2   00:::::::::::::00       4:::::::::4    88:::::::::::::88  " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2222222     2:::::2  0:::::::000:::::::0     4::::44::::4   8::::::88888::::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "             2:::::2  0::::::0   0::::::0    4::::4 4::::4   8:::::8     8:::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "             2:::::2  0:::::0     0:::::0   4::::4  4::::4   8:::::8     8:::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "          2222::::2   0:::::0     0:::::0  4::::4   4::::4    8:::::88888:::::8  " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "     22222::::::22    0:::::0 000 0:::::0 4::::444444::::444   8:::::::::::::8   " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "   22::::::::222      0:::::0 000 0:::::0 4::::::::::::::::4  8:::::88888:::::8  " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "  2:::::22222         0:::::0     0:::::0 4444444444:::::444 8:::::8     8:::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2:::::2              0:::::0     0:::::0           4::::4   8:::::8     8:::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2:::::2              0::::::0   0::::::0           4::::4   8:::::8     8:::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2:::::2       222222 0:::::::000:::::::0           4::::4   8::::::88888::::::8 " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2::::::2222222:::::2  00:::::::::::::00          44::::::44  88:::::::::::::88  " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 2::::::::::::::::::2    00:::::::::00            4::::::::4    88:::::::::88    " RESET FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " 22222222222222222222      000000000              4444444444      888888888      " RESET FG_DEFAULT] LINE(1)
-    print [FG_GREEN     "        From: http://patorjk.com/software/taag/#p=display&f=Doh&t=2048           " RESET FG_DEFAULT] LINE(2)
+    print [FG_BLUE BOLD "  /$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$    " RESET FG_RED "                           /$$          " FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD " /$$__  $$ /$$$_  $$| $$  | $$ /$$__  $$   " RESET FG_RED "                          | $$          " FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "|__/  \ $$| $$$$\ $$| $$  | $$| $$  \ $$   " RESET FG_RED "  /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$$" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "  /$$$$$$/| $$ $$ $$| $$$$$$$$|  $$$$$$/   " RESET FG_RED " /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD " /$$____/ | $$\ $$$$|_____  $$ >$$__  $$   " RESET FG_RED "| $$  \__/| $$$$$$$$| $$  | $$|  $$$$$$ " FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "| $$      | $$ \ $$$      | $$| $$  \ $$   " RESET FG_RED "| $$      | $$_____/| $$  | $$ \____  $$" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "| $$$$$$$$|  $$$$$$/      | $$|  $$$$$$//$$" RESET FG_RED "| $$      |  $$$$$$$|  $$$$$$$ /$$$$$$$/" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "|________/ \______/       |__/ \______/|__/" RESET FG_RED "|__/       \_______/ \_______/|_______/ " FG_DEFAULT] LINE(2)
+    print [FG_BLUE BOLD "   http://patorjk.com/software/taag/#p=display&f=Big%20Money-ne&t=2048.reds                        " FG_DEFAULT] LINE(1)
+    print [FG_GREEN BOLD "          Inspired by https://github.com/plibither8/2048.cpp" FG_DEFAULT] LINE(1)
 ]
 
 
