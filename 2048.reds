@@ -213,8 +213,8 @@ game: context [
     draw-board: func [
         /local x y i tile
     ][
-        ;clear-screen
-        ;draw-ascii
+        clear-screen
+        draw-ascii
 
         print lf
         y: 0
@@ -357,28 +357,34 @@ game: context [
         until [
             c: _board + curr    ; 当前块
             n1: _board + next   ; 下一块
-            if c/value > 0 [    ; 当前块非空，往后找到第一个不为空的判断
+            ;printf ["curr:%d, next:%d ==> " curr next]
+            if c/value > 0 [    ; 当前块非空，往后找到第一个非空白块
                 nn: next
                 h: 4 - k
                 while [h > 0][
                     n: _board + nn
+                    ;printf [" %d:%d, " nn n/value]
                     if n/value > 0 [   ; 后面第一个不为空的块
                         either c/value = n/value [
                             ; 与当前块相同，合并
+                            ;printf ["%d:%d -> %d:%d^/" nn n/value curr c/value]
                             c/value: c/value * 2
-                            printf ["%d -> %d^/" nn curr]
+                            n/value: 0
                         ][
-                            ; 与当前块不同，挪到当前的下一块
-                            n1/value: n/value
-                            printf ["%d >> %d^/" nn next]
+                            if next <> nn [
+                                ; 与当前块不同，且 n 与 n1 不同，否则否则会被设为 0
+                                ;printf ["%d:%d >> %d:%d^/" nn n/value next n1/value]
+                                n1/value: n/value ; 挪到当前的下一个空白块
+                                n/value: 0
+                            ]
                         ]
-                        n/value: 0
                         break
                     ]
                     nn: nn + j
                     h: h - 1
                 ]
             ]
+            ;print lf
             curr: next
             next: next + j
             k: k + 1
@@ -420,6 +426,7 @@ game: context [
     ]
 
     add-tiles-for-test: does [
+        ; 用于测试
         game/fill-tile 0 2
         game/fill-tile 2 2
 
@@ -434,11 +441,11 @@ game: context [
     ]
 
     comment {
+            --Board index
         0  1  2  3
         4  5  6  7
         8  9  10 11
         12 13 14 15
-
             --Up
         curr: 0 4 8    1 5 9    2 6  10   3 7  11
         next: 4 8 12   5 9 13   6 10 14   7 11 15
@@ -461,9 +468,8 @@ game: context [
     ][
         ; 处理每一行/列的值
         handle-tile-values curr next j
-
         ; 压缩掉空白块
-        ;compact-empty-tiles curr next j
+        compact-empty-tiles curr next j
     ]
 
     start: func [
@@ -532,8 +538,8 @@ game: context [
 
 start-game: does [
     game/init-board 4 4
-    ;game/add-tiles 3
-    game/add-tiles-for-test     ;-- test
+    game/add-tiles 3
+    ;game/add-tiles-for-test     ;-- test
     game/draw-board
     ;game/debug-print-board
     game/start
