@@ -112,17 +112,17 @@ clear-screen: func [][
 
 draw-ascii: func [][
     LINE(1)
-    print [FG_BLUE BOLD "  /$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$    " RESET FG_RED "                           /$$          " FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " /$$__  $$ /$$$_  $$| $$  | $$ /$$__  $$   " RESET FG_RED "                          | $$          " FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "|__/  \ $$| $$$$\ $$| $$  | $$| $$  \ $$   " RESET FG_RED "  /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$$" FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "  /$$$$$$/| $$ $$ $$| $$$$$$$$|  $$$$$$/   " RESET FG_RED " /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/" FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD " /$$____/ | $$\ $$$$|_____  $$ >$$__  $$   " RESET FG_RED "| $$  \__/| $$$$$$$$| $$  | $$|  $$$$$$ " FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "| $$      | $$ \ $$$      | $$| $$  \ $$   " RESET FG_RED "| $$      | $$_____/| $$  | $$ \____  $$" FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "| $$$$$$$$|  $$$$$$/      | $$|  $$$$$$/" RESET "/$$" RESET FG_RED "| $$      |  $$$$$$$|  $$$$$$$ /$$$$$$$/" FG_DEFAULT] LINE(1)
-    print [FG_BLUE BOLD "|________/ \______/       |__/ \______/"  RESET "|__/" RESET FG_RED "|__/       \_______/ \_______/|_______/ " FG_DEFAULT] LINE(2)
-    print [FG_BLUE BOLD "   http://patorjk.com/software/taag/#p=display&f=Big%20Money-ne&t=2048.reds                        " FG_DEFAULT] LINE(1)
-    print [FG_GREEN BOLD "          Inspired by https://github.com/plibither8/2048.cpp" FG_DEFAULT] LINE(1)
-    print [FG_RED        "          Writen in Red/System (https://github.com/red/red)"  FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "  /$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$    "              RESET FG_RED "                           /$$          " FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD " /$$__  $$ /$$$_  $$| $$  | $$ /$$__  $$   "              RESET FG_RED "                          | $$          " FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "|__/  \ $$| $$$$\ $$| $$  | $$| $$  \ $$   "              RESET FG_RED "  /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$$" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "  /$$$$$$/| $$ $$ $$| $$$$$$$$|  $$$$$$/   "              RESET FG_RED " /$$__  $$ /$$__  $$ /$$__  $$ /$$_____/" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD " /$$____/ | $$\ $$$$|_____  $$ >$$__  $$   "              RESET FG_RED "| $$  \__/| $$$$$$$$| $$  | $$|  $$$$$$ " FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "| $$      | $$ \ $$$      | $$| $$  \ $$   "              RESET FG_RED "| $$      | $$_____/| $$  | $$ \____  $$" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "| $$$$$$$$|  $$$$$$/      | $$|  $$$$$$/"    RESET "/$$"  RESET FG_RED "| $$      |  $$$$$$$|  $$$$$$$ /$$$$$$$/" FG_DEFAULT] LINE(1)
+    print [FG_BLUE BOLD "|________/ \______/       |__/ \______/"     RESET "|__/" RESET FG_RED "|__/       \_______/ \_______/|_______/ " FG_DEFAULT] LINE(2)
+    print [FG_CYAN BOLD "   http://patorjk.com/software/taag/#p=display&f=Big%20Money-ne&t=2048.reds                        " FG_DEFAULT] LINE(1)
+    print [FG_GREEN BOLD "          Inspired by https://github.com/plibither8/2048.cpp" RESET FG_DEFAULT] LINE(1)
+    print [FG_RED        "          Writen in Red/System (https://github.com/red/red)"  RESET FG_DEFAULT] LINE(1)
 ]
 
 
@@ -204,11 +204,22 @@ game: context [
         as-c-string _colors/index
     ]
 
+    draw-menu: does [
+        LINE(1)
+        print [FG_LIGHT_MAGENTA "------------------------------------------------------------" lf]
+        print [FG_LIGHT_MAGENTA "    W => Up" lf]
+        print [FG_LIGHT_MAGENTA "    A => Left" lf]
+        print [FG_LIGHT_MAGENTA "    S => Down" lf]
+        print [FG_LIGHT_MAGENTA "    D => Right" lf]
+        print [FG_LIGHT_MAGENTA "------------------------------------------------------------" lf RESET FG_DEFAULT]
+]
+
     draw-board: func [
         /local x y i tile
     ][
         clear-screen
         draw-ascii
+        draw-menu
 
         print lf
         y: 0
@@ -540,43 +551,5 @@ start-game: does [
     game/start
 ]
 
-show-menu: func [
-    /local
-        cin [byte-ptr!]
-][
-    clear-screen
-    ;draw-ascii
-
-    print [BOLD "  Welcome to " FG_BLUE "2048!" FG_DEFAULT RESET] LINE(2)
-    print ["          1. Play a New Game"] LINE(1)
-    print ["          2. View Highscores and Statistics"] LINE(2)
-    print ["  Enter Choice: "]
-
-    cin: as byte-ptr! system/stack/allocate 2
-
-    print lf
-    start-game
-    exit
-
-    if null? fgets cin 2 std-in [
-        start-game
-    ]
-
-    switch cin/1 [
-        #"1" [
-            print ["1. Play a New Game^/"]
-            start-game
-        ]
-        #"2" [
-            print ["2. View Highscores and Statistics^/^/"]
-        ]
-        default [
-            start-game
-        ]
-    ]
-    
-]
-
-show-menu
-
+start-game
 
