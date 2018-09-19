@@ -64,10 +64,7 @@ Red/System []
         return: [integer!]
         /local c
     ][
-        ; https://www.ibm.com/support/knowledgecenter/zh/ssw_aix_72/com.ibm.aix.cmds5/stty.htm#stty__row-d3e57314
-        shell "stty -echo -icanon" ; 不回显，禁用规范输入
         c: getchar
-        shell "stty echo icanon" ; 恢复
         c
     ]
 ]
@@ -543,12 +540,21 @@ game: context [
 ;---------------------- 2048  ---------------------- 
 
 start-game: does [
+    #if OS <> 'Windows [
+        ; https://www.ibm.com/support/knowledgecenter/zh/ssw_aix_72/com.ibm.aix.cmds5/stty.htm#stty__row-d3e57314
+        shell "stty -echo -icanon" ; 不回显，禁用规范输入
+    ]
+
     game/init-board 4 4
     game/add-tiles 3
     ;game/add-tiles-for-test     ;-- test
     game/draw-board
     ;game/debug-print-board
     game/start
+
+    #if OS <> 'Windows [
+        shell "stty echo icanon" ; 恢复
+    ]
 ]
 
 start-game
