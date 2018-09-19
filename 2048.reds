@@ -253,7 +253,7 @@ game: context [
         LINE(2)
     ]
 
-    game-over?: func [
+    is-game-over?: func [
         return: [logic!]
         /local i tile
     ][
@@ -271,8 +271,6 @@ game: context [
         return: [integer!]
         /local i tile
     ][
-        if game-over? [return -1]
-    
         until [
             i: rand-int _total
             tile: _board + i
@@ -519,10 +517,13 @@ game: context [
             ]
 
             if update? [
+                if is-game-over? [
+                    print-line "Game Over! Bye ~"
+                    break
+                ]
                 ; 随机新增一个块，重画棋盘（最好不要在刚移动过的块来新增）
                 game/add-tiles 1
                 draw-board
-                ;debug-print-board
             ]
         ]
     ]
