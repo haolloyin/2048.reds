@@ -96,11 +96,13 @@ rand-int: func [
 ]
 
 log2: func [
-    x   [integer!]
+    x [integer!]
     return: [integer!]
+    /local 
+        f [float!]
 ][
-    ;as-integer ( (log10 as-float x) / (log10 as-float 2) )
-    as-integer ceil ( (log10 as-float x) / (log10 as-float 2) )
+    f: (log10 as-float x) / (log10 as-float 2)
+    as-integer f
 ]
 
 clear-screen: func [][
