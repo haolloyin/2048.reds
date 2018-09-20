@@ -109,6 +109,17 @@ clear-screen: func [][
     shell "clear"
 ]
 
+draw-menu: does [
+    LINE(1)
+    print [FG_LIGHT_MAGENTA "------------------------------------------------------------" lf]
+    print [FG_LIGHT_MAGENTA "    W => Up" lf]
+    print [FG_LIGHT_MAGENTA "    A => Left" lf]
+    print [FG_LIGHT_MAGENTA "    S => Down" lf]
+    print [FG_LIGHT_MAGENTA "    D => Right" lf]
+    print [FG_LIGHT_MAGENTA "    Q => Quit Game" lf]
+    print [FG_LIGHT_MAGENTA "------------------------------------------------------------" lf RESET FG_DEFAULT]
+]
+
 draw-ascii: func [][
     LINE(1)
     print [FG_BLUE BOLD "  /$$$$$$   /$$$$$$  /$$   /$$  /$$$$$$    "              RESET FG_RED "                           /$$          " FG_DEFAULT] LINE(1)
@@ -203,16 +214,6 @@ game: context [
         as-c-string _colors/index
     ]
 
-    draw-menu: does [
-        LINE(1)
-        print [FG_LIGHT_MAGENTA "------------------------------------------------------------" lf]
-        print [FG_LIGHT_MAGENTA "    W => Up" lf]
-        print [FG_LIGHT_MAGENTA "    A => Left" lf]
-        print [FG_LIGHT_MAGENTA "    S => Down" lf]
-        print [FG_LIGHT_MAGENTA "    D => Right" lf]
-        print [FG_LIGHT_MAGENTA "------------------------------------------------------------" lf RESET FG_DEFAULT]
-]
-
     draw-board: func [
         /local x y i tile
     ][
@@ -225,7 +226,7 @@ game: context [
         while [y < _y][
             print "  +" 
 
-            ; 顶部边框
+            ; top border
             x: 0
             while [x < _x][
                 print "------+"
@@ -235,7 +236,7 @@ game: context [
             print lf
             print "  |"
 
-            ; 中间填充数字
+            ; tiles grid with value
             x: 1
             while [x <= _x][
                 i: y * 4 + x - 1
@@ -253,7 +254,7 @@ game: context [
             y: y + 1
         ]
 
-        ; 底部边框
+        ; bottom border
         x: 0
         print "  +"
         while [x < _x][
@@ -277,7 +278,6 @@ game: context [
     ]
 
     find-empty-tile: func [
-        "随机找一个空白块"
         return: [integer!]
         /local i tile
     ][
@@ -290,23 +290,23 @@ game: context [
     ]
 
     random-tile-value: func [
-        "获取一个空白块的初始值，只能是 2 4 8 之一"
+        "can only be 2 or 4 or 8"
         return: [integer!]
         /local v
     ][
         until [
             v: rand-int 8
-            all [
-                v <> 0
-                v <> 6
-                v % 2 <> 1
+            any [
+                v = 2
+                v = 4
+                v = 8
             ]
         ]
         v
     ]
 
     fill-tile: func [
-        "对指定下标的空白块增加一个值"
+        "fill a tile with a given value"
         index   [integer!]
         value   [integer!]
         return: [integer!]
@@ -318,7 +318,7 @@ game: context [
     ]
 
     add-tiles: func [
-        "随机找 n 个空白块，并填上随机值"
+        "find n random tiles, each fills with a random value"
         n [integer!]
         return: [integer!]
         /local i index value
@@ -346,7 +346,7 @@ game: context [
     ]
 
     handle-tile-values: func [
-        "处理每一行/列的值"
+        "add value with two closest tiles with same value, or move next no zero tile to next one"
         curr    [integer!]
         next    [integer!]
         j       [integer!]
@@ -357,26 +357,26 @@ game: context [
     ][
         k: 1
         until [
-            c: _board + curr    ; 当前块
-            n1: _board + next   ; 下一块
+            c: _board + curr    ; current tile
+            n1: _board + next   ; next tile
             ;printf ["curr:%d, next:%d ==> " curr next]
-            if c/value > 0 [    ; 当前块非空，往后找到第一个非空白块
+            if c/value > 0 [    ; current tile is no empty, need to find next no empty one
                 nn: next
                 h: 4 - k
                 while [h > 0][
                     n: _board + nn
                     ;printf [" %d:%d, " nn n/value]
-                    if n/value > 0 [   ; 后面第一个不为空的块
+                    if n/value > 0 [   ; next on empty one
                         either c/value = n/value [
-                            ; 与当前块相同，合并
+                            ; same value as current tile, double current's value and reset the next to zero
                             ;printf ["%d:%d -> %d:%d^/" nn n/value curr c/value]
                             c/value: c/value * 2
                             n/value: 0
                         ][
                             if next <> nn [
-                                ; 与当前块不同，且 n 与 n1 不同，否则否则会被设为 0
+                                ; different value with current tile, and is not the cloesest next one, then move it
                                 ;printf ["%d:%d >> %d:%d^/" nn n/value next n1/value]
-                                n1/value: n/value ; 挪到当前的下一个空白块
+                                n1/value: n/value ; move to next closest empty tile
                                 n/value: 0
                             ]
                         ]
@@ -395,7 +395,7 @@ game: context [
     ]
 
     compact-empty-tiles: func [
-        "压缩空白块"
+        "make sure no empty tile between two filled tiles"
         curr    [integer!]
         next    [integer!]
         j       [integer!]
@@ -405,13 +405,13 @@ game: context [
     ][
         k: 1
         until [
-            c: _board + curr    ; 当前块
-            if c/value = 0 [    ; 当前为空，往后找到第一个不为空的填进来
+            c: _board + curr    ; current tile
+            if c/value = 0 [    ; current tile is empty, find next no empty one
                 nn: next
                 h: 4 - k
                 while [h > 0][
                     n: _board + nn
-                    if n/value <> 0 [   ; 后面第一个不为空的块
+                    if n/value <> 0 [   ; first no empty tile
                         c/value: n/value
                         n/value: 0
                         break
@@ -428,7 +428,7 @@ game: context [
     ]
 
     add-tiles-for-test: does [
-        ; 用于测试
+        ; just for test: Left
         game/fill-tile 0 2
         game/fill-tile 2 2
 
@@ -444,10 +444,10 @@ game: context [
 
     comment {
             --Board index
-        0  1  2  3
-        4  5  6  7
-        8  9  10 11
-        12 13 14 15
+        0   1   2   3
+        4   5   6   7
+        8   9   10  11
+        12  13  14  15
             --Up
         curr: 0 4 8    1 5 9    2 6  10   3 7  11
         next: 4 8 12   5 9 13   6 10 14   7 11 15
@@ -465,12 +465,9 @@ game: context [
     move-line: func [
         curr    [integer!]
         next    [integer!]
-        i       [integer!]
         j       [integer!]
     ][
-        ; 处理每一行/列的值
         handle-tile-values curr next j
-        ; 压缩掉空白块
         compact-empty-tiles curr next j
     ]
 
@@ -478,17 +475,16 @@ game: context [
         /local c times curr next update?
     ][
         forever [
-            c: getch    ; 无回显、缓冲读取一个字符
+            c: getch    ; no echo, read only 1 char every time
             times: 0
             update?: true
 
             switch c [
                 #"w" [  ; Up
-                    ; 每次要处理 4 行/列
                     while [times < 4][
                         curr: times
                         next: curr + 4
-                        move-line curr next 1 4
+                        move-line curr next 4
                         times: times + 1
                     ]
                 ]
@@ -496,7 +492,7 @@ game: context [
                     while [times < 4][
                         curr: 12 + times
                         next: curr - 4
-                        move-line curr next 1 -4
+                        move-line curr next -4
                         times: times + 1
                     ]
                 ]
@@ -504,7 +500,7 @@ game: context [
                     while [times < 4][
                         curr: times * 4
                         next: curr + 1
-                        move-line curr next 4 1
+                        move-line curr next 1
                         times: times + 1
                     ]
                 ]
@@ -512,7 +508,7 @@ game: context [
                     while [times < 4][
                         curr: 3 + (times * 4)
                         next: curr - 1
-                        move-line curr next 4 -1
+                        move-line curr next -1
                         times: times + 1
                     ]
                 ]
@@ -528,10 +524,9 @@ game: context [
 
             if update? [
                 if is-game-over? [
-                    print-line "Game Over! Bye ~"
+                    print-line ["Game Over! Bye ~" lf]
                     break
                 ]
-                ; 随机新增一个块，重画棋盘（最好不要在刚移动过的块来新增）
                 game/add-tiles 1
                 draw-board
             ]
