@@ -3,11 +3,12 @@
 `2048.reds` is inspired by [2048.cpp](https://github.com/plibither8/2048.cpp), a terminal version of the game "2048" written in Red/System(a C-level language, but simpler and easier :).
 
 
-### Sceenshots
+## Sceenshots
+
+TBD
 
 
-
-### Download and play
+## Download and play
 
 - macOS, 
 - Windows,
@@ -21,7 +22,7 @@
 - Linux and MacOS is fine to run on their terminal, but Windows needs to run on a working terminal (like Cygwin, Windows Subsystem for Linux or Git bash, etc).
 
 
-### Compile
+## Compile
 
 First you need to download the `Red` toolchain binary [here](https://www.red-lang.org/p/download.html), you could compile `2048` game to any OS you like.
 
@@ -42,7 +43,7 @@ red -target MSDOS -compile 2048.reds
 red -target Darwin -compile 2048.reds
 ```
 
-### Resources about `Red/System`
+## Resources about `Red/System`
 
 - [Red/System Language Specification](https://static.red-lang.org/red-system-specs-light.html)
 - [Official website](https://www.red-lang.org/)
