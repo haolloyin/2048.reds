@@ -89,10 +89,6 @@ comment {
         rand: "rand" [
             return: [integer!]
         ]
-        log10: "log10" [
-            x   [float!]
-            return: [float!]
-        ]
     ]
 ]
 
@@ -165,7 +161,7 @@ log2: func [
     /local 
         f [float!]
 ][
-    f: (log10 as-float x) / (log10 as-float 2)
+    f: (log-10 as-float x) / (log-10 as-float 2)
     as-integer f
 ]
 
